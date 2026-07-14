@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+
+<title>Arcade Registration</title>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=VT323&display=swap">
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; 
+}
+
+body {
+  font-family: 'Orbitron', sans-serif;
+  color: white;
+  background-color: rgb(5, 0, 15);
+  height: 100vh;
+
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  background-image: 
+    linear-gradient(rgba(10,0,20,0.85) 50%, rgba(0,0,0,0.5) 50%), 
+
+    linear-gradient(90deg, rgba(255,0,255,0.05), rgba(128,0,255,0.02), rgba(255,0,128,0.05)), 
+    url("error_bg.png");
+  
+  background-position: center;
+  background-size: 100% 4px, 6px 100%, cover;
+}
+
+#arcade-cabinet {
+  width: 480px;
+  background-color: rgb(13, 0, 26);
+  border: 3px solid #ff00ff;
+
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  padding: 30px;
+
+  /* outer glow and inner glow */
+  box-shadow: 0 0 25px magenta, inset 0 0 10px fuchsia;
+}
+
+h1.main-title {
+  font-size: 26px;
+  text-align: center;
+
+  text-transform: uppercase;
+  color: magenta;
+  margin-bottom: 5px;
+  text-shadow: 0 0 12px fuchsia;
+}
+
+.subtitle {
+
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  color: #cc00ff;
+  text-align: center;
+  margin-bottom: 25px;
+  text-shadow: 0 0 4px #c0f;
+}
+
+#error-box {
+  background-color: #1a001a;
+  border: 2px dashed rgb(255, 0, 85);
+  color: #f36;
+
+  font-family: 'VT323', monospace;
+  font-size: 17px;
+  padding: 10px;
+  margin-bottom: 20px;
+
+  display: none;
+}
+
+.error-title {
+  font-weight: bold;
+  color: #ff0055;
+  margin-bottom: 2px;
+
+}
+
+.field-group { 
+  margin-bottom: 15px; 
+}
+
+label {
+  font-size: 11px;
+  color: #f0f;
+
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 5px;
+}
+
+
+input[type="text"], 
+input[type="password"], 
+select {
+  width: 100%;
+  padding: 11px;
+  background-color: #05000a;
+  color: white;
+  border: 1px solid #606;
+
+  border-radius: 4px;
+  font-family: "Orbitron", sans-serif;
+  font-size: 12px;
+}
+
+input:focus, 
+select:focus {
+  border-color: magenta;
+  outline: none;
+
+  box-shadow: 0 0 10px fuchsia;
+  color: #ff00ff;
+}
+
+select option { 
+  background-color: #0d001a; 
+  color: white; 
+}
+
+.submit-btn {
+  width: 100%;
+  
+  padding: 15px;
+  margin-top: 15px;
+  background-color: #ff00ff;
+  color: black;
+  border: none;
+
+  border-radius: 4px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 16px;
+
+  font-weight: 900;
+  text-transform: uppercase;
+  cursor: pointer;
+
+  box-shadow: 0 0 15px magenta;
+}
+
+.submit-btn:hover {
+  background-color: #cc00ff;
+  color: white;
+
+  box-shadow: 0 0 20px #c0f;
+}
+
+#pixel-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+  display: none;
+
+  z-index: 99;
+  grid-template-columns: repeat(40, 1fr);
+  grid-template-rows: repeat(40, 1fr);
+}
+
+.pixel-block { 
+  background-color: black; 
+  opacity: 0; 
+
+}
+
+#success-screen { 
+  display: none; 
+  text-align: center; 
+}
+
+.profile-card {
+
+  background-color: #05000a;
+  border: 2px solid fuchsia;
+  border-radius: 6px;
+  padding: 15px;
+  margin-top: 15px;
+  text-align: left;
+}
+
+.profile-line {
+
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  color: #cc00ff;
+  margin-bottom: 8px;
+}
+
+.profile-line span {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  color: white;
+  margin-left: 10px;
+}
+</style>
+</head>
+<body>
+
+<div id="arcade-cabinet">
+  <div id="pixel-overlay"></div>
+  
+  <div id="form-wrapper">
+    <h1 class="main-title">User Registration Portal</h1>
+    <div class="subtitle">SYSTEM INIT...</div>
+    
+    <div id="error-box">
+      <div class="error-title">FATAL ERROR:</div>
+      <div id="error-msg"></div>
+    </div>
+
+    <form id="reg-form" autocomplete="off">
+      <div class="field-group">
+        <label>Player Name</label>
+
+        <input type="text" id="username" placeholder="Username">
+      </div>
+      <div class="field-group">
+
+        <label>Comms Link</label>
+
+        <input type="text" id="email" placeholder="Email Address">
+      </div>
+      <div class="field-group">
+        <label>Security Cipher</label>
+
+        <input type="password" id="password" placeholder="Password">
+      </div>
+
+      <div class="field-group">
+        <label>Confirm Cipher</label>
+        <input type="password" id="confirm-password" placeholder="Confirm Password">
+      </div>
+      
+      <div class="field-group">
+        <label>Gameplay Mode</label>
+        <select id="game-mode"></select>
+      </div>
+
+      <button class="submit-btn" type="submit">EXECUTE</button>
+    </form>
+  </div>
+
+  <div id="success-screen">
+    <h1 class="main-title" style="text-shadow:0 0 10px magenta; color:magenta;">OVERRIDE SUCCESS</h1>
+
+    <div class="subtitle" style="color:white;">USER DATA LOGGED</div>
+
+    <div id="card-content" class="profile-card"></div>
+
+    <button class="submit-btn" style="box-shadow:0 0 15px #c0f; color:white; background-color:#cc00ff;" onclick="window.location.reload();">REBOOT TERMINAL</button>
+  </div>
+</div>
+
+<script>
+$(document).ready(function() {
+
+    // storing the game modes
+    let availableModes = [
+        "Select Mode", 
+        "Casual", 
+        "Competitive", 
+        "Hardcore"
+    ];
+    
+    
+    let modeCounter = 0;
+    while (modeCounter < availableModes.length) {
+        let currentOpt = availableModes[modeCounter];
+        
+        if (modeCounter === 0) {
+            $('#game-mode').append('<option value="" selected disabled>' + currentOpt + '</option>');
+        } 
+        else {
+
+            let lowerCaseMode = currentOpt.toLowerCase();
+            $('#game-mode').append("<option value='" + lowerCaseMode + "'>" + currentOpt + "</option>");
+        }
+        modeCounter++;
+    }
+
+    // player profile object constructor
+    function PlayerProfile(n, e, m) {
+        this.playerName= n;
+        this.commsLink= e;
+
+        this.gameMode= m;
+        this.renderCard= function(targetId) {
+            //profile card html string
+            let cardHtmlString= '<div class="profile-line">ID:<span>' + this.playerName + '</span></div>';
+            cardHtmlString +='<div class="profile-line">LINK:<span>' + this.commsLink + '</span></div>';
+
+            cardHtmlString +='<div class="profile-line">MODE:<span>' + this.gameMode.toUpperCase() + '</span></div>';
+            
+            $(targetId).html(cardHtmlString);
+        };
+    }
+
+    // glitch animation logic
+    function runGlitchRedraw(callbackFunc) {
+        let overlayBox = $('#pixel-overlay');
+        overlayBox.empty().css('display', 'grid');
+        
+        // using 1600 tiny black squares for the glitch
+        for (let blockCount = 0; blockCount < 1600; blockCount++) {
+            overlayBox.append('<div class="pixel-block"></div>');
+
+        }
+        
+        let allBlocks = $('.pixel-block');
+        
+        allBlocks.each(function() {
+            let randomDelay = Math.random() * 200;
+            let glitchColors = ['#ff00ff', '#cc00ff', '#ff00aa', '#000'];
+            let randomPick = glitchColors[Math.floor(Math.random() * glitchColors.length)];
+
+            
+            $(this).css('background-color', randomPick);
+            $(this).delay(randomDelay).animate({ opacity: 1 }, 10, function() {
+                $(this).css('background-color', '#000');
+            });
+        });
+
+        setTimeout(function() {
+            callbackFunc();
+        }, 180);
+
+        setTimeout(function() {
+            allBlocks.each(function() {
+                let fadeDelay = Math.random() * 150;
+                $(this).delay(fadeDelay).animate({ opacity: 0 }, 10);
+
+            });
+            setTimeout(function() {
+                overlayBox.hide();
+            }, 200);
+        }, 400);
+    }
+
+  //execute button
+    $('#reg-form').on('submit', function(event) {
+        event.preventDefault(); // stop page refresh
+        
+        let userNameInput = $('#username').val().trim();
+
+        let userEmailInput = $('#email').val().trim();
+        let pwdInput = $('#password').val();
+
+        let confirmPwdInput = $('#confirm-password').val();
+        let selectedMode = $('#game-mode').val();
+        
+        let errorMessage = "";
+
+        // empty field check
+
+        if (userNameInput === "" || userEmailInput === "" || pwdInput === "" || confirmPwdInput === "" || !selectedMode) {
+            errorMessage = "ALL FIELDS MUST BE POPULATED.";
+        } 
+        
+        else if (userNameInput.indexOf(' ') >= 0) {
+
+            errorMessage = "NAME CANNOT CONTAIN BLANK SPACES.";
+        } 
+        // email format
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userEmailInput)) {
+            errorMessage = "COMM LINK ESTABLISHMENT FAILED. INVALID FORMAT.";
+        }
+        // password length
+
+        else if (pwdInput.length < 8) {
+            errorMessage = "CIPHER MUST BE AT LEAST 8 CHARACTERS.";
+        }
+        // matching passwords 
+        else if (pwdInput !== confirmPwdInput) {
+            errorMessage = "CIPHER MISMATCH DETECTED.";
+        }
+
+
+        if (errorMessage !== "") {
+            $('#error-msg').text(errorMessage);
+            $('#error-box').slideDown();
+        } else {
+            // otherwise, hide error box, make the object, and trigger the glitch
+            $('#error-box').slideUp();
+            
+            let newPlayer = new PlayerProfile(userNameInput, userEmailInput, selectedMode);
+            
+            runGlitchRedraw(function() {
+                $('#form-wrapper').hide();
+                $('#success-screen').show();
+                newPlayer.renderCard('#card-content');
+            });
+        }
+    });
+});
+</script>
+
+</body>
+</html>
