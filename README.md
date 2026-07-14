@@ -305,6 +305,7 @@ Since the project relies on two **external CDN resources**, here is what happens
 
 **NeuraHals** — © 2026 Gamified Portal 
 Web Technologies — Theory Project
+
 *Building immersive digital experiences, one pixel at a time.*
 
 ---
